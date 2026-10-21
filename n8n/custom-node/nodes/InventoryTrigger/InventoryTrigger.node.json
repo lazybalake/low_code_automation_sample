@@ -1,9 +1,0 @@
-{
-  "node": "n8n-nodes-inventory.inventoryTrigger",
-  "nodeVersion": "1.0",
-  "codexVersion": "1.0",
-  "categories": ["Productivity", "Data & Storage"],
-  "resources": {
-    "primaryDocumentation": [{ "url": "https://docs.n8n.io/connect/create-nodes" }]
-  }
-}
