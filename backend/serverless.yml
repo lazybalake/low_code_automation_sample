@@ -1,8 +1,11 @@
-# Inventory and order API as AWS Lambda functions (HTTP API + DynamoDB). Make scenarios call it over HTTPS.
-#   Local:  npm run db:up && npm run dev   (serverless-offline + DynamoDB Local, see README.md)
-#   Deploy: npm run deploy                 (AWS credentials and the SSM secrets in docs/DEPLOY-AWS.md)
-service: inventory-api
+# Inventory and order API as one AWS Lambda function behind API Gateway, answering from mock data in memory
+# (src/mockData.ts). Make's custom app and scenarios call it over HTTPS.
+#   Local:  npm run dev      (serverless-offline: the same Lambda, on http://localhost:3000)
+#   Deploy: npm run deploy   (docs/DEPLOY-AWS.md)
+service: inventory-sample-api
 frameworkVersion: '3'
+# Load backend/.env (and .env.<stage> if present, e.g. .env.prod) for every command: deploy, offline, info
+useDotenv: true
 
 provider:
   name: aws
@@ -15,130 +18,40 @@ provider:
   timeout: 10
   logRetentionInDays: 30
   versionFunctions: false
-
+  
   environment:
-    STAGE: ${sls:stage}
-    TABLE_PREFIX: ${self:custom.tablePrefix}
-    STORE_NAME: ${env:STORE_NAME, 'Trailhead Supply Co.'}
-    CURRENCY: ${env:CURRENCY, 'USD'}
-    # Secrets are not here: a function reads the SSM parameter each name points to (src/utils/secrets.ts).
-    # Local runs set API_KEY and WEBHOOK_SECRET themselves in .env.local, which only npm run dev loads.
-    API_KEY_PARAM: ${self:custom.ssmPrefix}/api-key
-    WEBHOOK_SECRET_PARAM: ${self:custom.ssmPrefix}/webhook-secret
-    # Fixed event -> URL routes, e.g. purchase_order.created=https://hook.us1.make.com/abc (docs/ARCHITECTURE.md)
-    WEBHOOK_SUBSCRIPTIONS: ${env:WEBHOOK_SUBSCRIPTIONS, ''}
-    # The reorder function raises purchase orders for low stock and backorders. 'false' leaves that to people or Make.
-    AUTO_REORDER: ${env:AUTO_REORDER, 'true'}
-    EVENT_TTL_DAYS: ${env:EVENT_TTL_DAYS, '30'}
+    STORE_NAME: ${env:STORE_NAME, 'Test Company Name'}
+    # From backend/.env (useDotenv above); a value already set in your shell wins
+    API_KEY: ${env:API_KEY}
+    # Optional: a Make custom webhook URL that receives every event
+    WEBHOOK_URL: ${env:WEBHOOK_URL, ''}
 
-  iam:
-    role:
-      statements:
-        # Every table of this stage and its indexes (transactions need the same per-item actions)
-        - Effect: Allow
-          Action:
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-            - dynamodb:ConditionCheckItem
-            - dynamodb:Query
-            - dynamodb:Scan
-          Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.tablePrefix}-*
-        - Effect: Allow
-          Action: ssm:GetParameter
-          Resource: arn:aws:ssm:${aws:region}:${aws:accountId}:parameter${self:custom.ssmPrefix}/*
-
-# One Lambda per area, each serving several routes picked by the route key (src/utils/routeDispatcher.ts)
 functions:
-  system:
-    handler: src/handlers/groups/system.handler
+  # The whole API is one function, src/handler.ts. Each route below is matched by API Gateway and handed to it.
+  api:
+    handler: src/handler.handler
     events:
-      - httpApi: 'GET /'
       - httpApi: 'GET /health'
       - httpApi: 'GET /api/me'
-      - httpApi: 'GET /api/meta'
-      - httpApi: 'GET /api/events'
-      # Anything no other route matched, answered in the API's own error format
-      - httpApi: '*'
-
-  products:
-    handler: src/handlers/groups/products.handler
-    events:
       - httpApi: 'GET /api/products'
-      - httpApi: 'POST /api/products'
-      - httpApi: 'GET /api/products/{ref}'
-      - httpApi: 'PATCH /api/products/{ref}'
-      - httpApi: 'POST /api/products/{ref}/adjust'
-      - httpApi: 'GET /api/inventory/low-stock'
-      - httpApi: 'GET /api/inventory/report'
-      - httpApi: 'GET /api/inventory/movements'
-
-  orders:
-    handler: src/handlers/groups/orders.handler
-    events:
+      - httpApi: 'GET /api/products/{sku}'
       - httpApi: 'GET /api/orders'
       - httpApi: 'POST /api/orders'
       - httpApi: 'GET /api/orders/{id}'
       - httpApi: 'POST /api/orders/{id}/status'
-
-  purchaseOrders:
-    handler: src/handlers/groups/purchaseOrders.handler
-    events:
       - httpApi: 'GET /api/purchase-orders'
       - httpApi: 'POST /api/purchase-orders'
-      - httpApi: 'GET /api/purchase-orders/{id}'
       - httpApi: 'POST /api/purchase-orders/{id}/status'
-
-  hooks:
-    handler: src/handlers/groups/hooks.handler
-    events:
-      - httpApi: 'GET /api/hooks'
+      - httpApi: 'GET /api/inventory/report'
       - httpApi: 'POST /api/hooks'
-      - httpApi: 'GET /api/hooks/{id}'
       - httpApi: 'DELETE /api/hooks/{id}'
-
-  # The events table's stream: every new event is sent to its webhook subscribers (Make, or anything else).
-  # Locally, scripts/local-streams.ts reads DynamoDB Local's stream and invokes this through serverless-offline.
-  deliverEvents:
-    handler: src/handlers/streams/deliverEvents.handler
-    timeout: 60 # retries with backoff to slow subscribers
-    events:
-      - stream:
-          type: dynamodb
-          arn: !GetAtt EventsTable.StreamArn
-          startingPosition: LATEST
-          batchSize: 10
-          maximumRetryAttempts: 2
-          filterPatterns:
-            - eventName: [INSERT]
-
-  # Same stream: low stock and backorders raise purchase orders (what n8n's two workflows used to do)
-  reorder:
-    handler: src/handlers/streams/reorder.handler
-    timeout: 30
-    events:
-      - stream:
-          type: dynamodb
-          arn: !GetAtt EventsTable.StreamArn
-          startingPosition: LATEST
-          batchSize: 10
-          maximumRetryAttempts: 2
-          filterPatterns:
-            - eventName: [INSERT]
-              dynamodb:
-                NewImage:
-                  type:
-                    S: [inventory.low_stock, order.created]
+      - httpApi: '*' # anything else: a 404 in the API's own error format
 
 plugins:
   - serverless-esbuild
   - serverless-offline
 
 custom:
-  tablePrefix: ${self:service}-${sls:stage}
-  ssmPrefix: /${self:service}/${sls:stage}
-
   esbuild:
     bundle: true
     minify: false
@@ -148,11 +61,8 @@ custom:
 
   serverless-offline:
     httpPort: 3000
-    lambdaPort: 3002 # scripts/local-streams.ts invokes the stream functions here
 
 resources:
-  Resources: ${file(./resources/tables.cjs):cloudFormation}
-
   Outputs:
     ApiUrl:
       Description: Base URL for Make's HTTP modules and the custom app connection

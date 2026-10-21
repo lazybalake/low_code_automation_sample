@@ -1,0 +1,2550 @@
+{
+    "name": "Integration JSON, HTTP, Google Sheets",
+    "flow": [
+        {
+            "id": 1,
+            "module": "http:MakeRequest",
+            "version": 4,
+            "parameters": {
+                "authenticationType": "apiKey",
+                "tlsType": "",
+                "apiKeyKeychain": 241231
+            },
+            "mapper": {
+                "url": "https://fq6umoa793.execute-api.us-east-1.amazonaws.com/api/orders",
+                "method": "get",
+                "parseResponse": "{{true}}",
+                "stopOnHttpError": true,
+                "timeout": "40",
+                "allowRedirects": false,
+                "shareCookies": false,
+                "requestCompressedContent": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": -351,
+                    "y": -101,
+                    "name": "Fetch Pending Orders"
+                },
+                "setupValidation": {
+                    "version": 1,
+                    "configuration": "340a8284eab0a01",
+                    "result": {
+                        "valid": true,
+                        "fields": []
+                    }
+                },
+                "restore": {
+                    "parameters": {
+                        "authenticationType": {
+                            "label": "API key (Legacy)Use when the service requires an API key in the header or query parameters."
+                        },
+                        "tlsType": {
+                            "label": "Empty"
+                        },
+                        "apiKeyKeychain": {
+                            "label": "Sample Backend AWS Lambda Keychain"
+                        }
+                    },
+                    "expect": {
+                        "method": {
+                            "mode": "chose",
+                            "label": "GET"
+                        },
+                        "headers": {
+                            "mode": "chose"
+                        },
+                        "queryParameters": {
+                            "mode": "chose"
+                        },
+                        "contentType": {
+                            "label": "Empty"
+                        },
+                        "parseResponse": {
+                            "mode": "edit"
+                        },
+                        "stopOnHttpError": {
+                            "mode": "chose"
+                        },
+                        "allowRedirects": {
+                            "mode": "chose"
+                        },
+                        "shareCookies": {
+                            "mode": "chose"
+                        },
+                        "requestCompressedContent": {
+                            "mode": "chose"
+                        },
+                        "paginationType": {
+                            "label": "Empty"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "authenticationType",
+                        "type": "select",
+                        "label": "Authentication type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "noAuth",
+                                "apiKeyConnection",
+                                "basicAuthConnection",
+                                "oAuth",
+                                "apiKey",
+                                "basicAuth"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tlsType",
+                        "type": "select",
+                        "label": "Transport layer security (TLS)",
+                        "validate": {
+                            "enum": [
+                                "mTls",
+                                "tls"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "proxyKeychain",
+                        "type": "keychain:proxy",
+                        "label": "Proxy"
+                    },
+                    {
+                        "name": "apiKeyKeychain",
+                        "type": "keychain:apikeyauth",
+                        "label": "Credentials",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "get",
+                                "head",
+                                "post",
+                                "put",
+                                "patch",
+                                "delete",
+                                "options"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "type": "array",
+                        "label": "Headers",
+                        "spec": {
+                            "name": "value",
+                            "label": "Header",
+                            "type": "collection",
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "label": "Name",
+                                    "type": "text",
+                                    "required": true,
+                                    "validate": {
+                                        "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                                    }
+                                },
+                                {
+                                    "name": "value",
+                                    "label": "Value",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "queryParameters",
+                        "type": "array",
+                        "label": "Query parameters",
+                        "spec": {
+                            "name": "value",
+                            "label": "Parameter",
+                            "type": "collection",
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "label": "Name",
+                                    "type": "text",
+                                    "required": true
+                                },
+                                {
+                                    "name": "value",
+                                    "label": "Value",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "contentType",
+                        "type": "select",
+                        "label": "Body content type",
+                        "validate": {
+                            "enum": [
+                                "json",
+                                "multipart",
+                                "urlEncoded",
+                                "custom"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "parseResponse",
+                        "type": "boolean",
+                        "label": "Parse response",
+                        "required": true
+                    },
+                    {
+                        "name": "stopOnHttpError",
+                        "type": "boolean",
+                        "label": "Return error if HTTP request fails",
+                        "required": true
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "uinteger",
+                        "label": "Timeout",
+                        "validate": {
+                            "min": 1,
+                            "max": 300
+                        }
+                    },
+                    {
+                        "name": "allowRedirects",
+                        "type": "boolean",
+                        "label": "Allow redirects",
+                        "required": true
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    },
+                    {
+                        "name": "requestCompressedContent",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    },
+                    {
+                        "name": "paginationType",
+                        "type": "select",
+                        "label": "Pagination type",
+                        "validate": {
+                            "enum": [
+                                "offsetBased",
+                                "pageBased",
+                                "urlBased",
+                                "tokenBased"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "data",
+                        "label": "Data",
+                        "type": "any"
+                    },
+                    {
+                        "name": "statusCode",
+                        "label": "Status Code",
+                        "type": "number"
+                    },
+                    {
+                        "name": "headers",
+                        "label": "Headers",
+                        "type": "collection",
+                        "spec": [
+                            {
+                                "name": "content-length",
+                                "label": "Content-Length",
+                                "type": "text"
+                            },
+                            {
+                                "name": "content-encoding",
+                                "label": "Content-Encoding",
+                                "type": "text"
+                            },
+                            {
+                                "name": "content-type",
+                                "label": "Content-Type",
+                                "type": "text"
+                            },
+                            {
+                                "name": "server",
+                                "label": "Server",
+                                "type": "text"
+                            },
+                            {
+                                "name": "cache-control",
+                                "label": "Cache-Control",
+                                "type": "text"
+                            },
+                            {
+                                "name": "set-cookie",
+                                "label": "Set-Cookie",
+                                "type": "array",
+                                "spec": {
+                                    "type": "text"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "onerror": [
+                {
+                    "id": 5,
+                    "module": "builtin:Break",
+                    "version": 1,
+                    "parameters": {},
+                    "mapper": {
+                        "retry": true,
+                        "count": "15",
+                        "interval": "1"
+                    },
+                    "metadata": {
+                        "designer": {
+                            "x": -545,
+                            "y": 155
+                        },
+                        "setupValidation": {
+                            "version": 1,
+                            "configuration": "bd5d447e7adb2e14",
+                            "result": {
+                                "valid": true,
+                                "fields": []
+                            }
+                        },
+                        "restore": {
+                            "expect": {
+                                "retry": {
+                                    "mode": "chose"
+                                }
+                            }
+                        },
+                        "expect": [
+                            {
+                                "name": "retry",
+                                "type": "boolean",
+                                "label": "Retry automatically",
+                                "required": true
+                            },
+                            {
+                                "name": "count",
+                                "type": "uinteger",
+                                "label": "Number of retries",
+                                "validate": {
+                                    "min": 1,
+                                    "max": 10000
+                                },
+                                "required": true
+                            },
+                            {
+                                "name": "interval",
+                                "type": "uinteger",
+                                "label": "Minutes between retries",
+                                "validate": {
+                                    "min": 1,
+                                    "max": 44640
+                                },
+                                "required": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "module": "google-sheets:addRow",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 11850245
+            },
+            "filter": {
+                "name": "",
+                "conditions": []
+            },
+            "mapper": {
+                "mode": "select",
+                "insertUnformatted": "{{false}}",
+                "valueInputOption": "USER_ENTERED",
+                "insertDataOption": "INSERT_ROWS",
+                "from": "drive",
+                "spreadsheetId": "/1KGx-GM1Yn3GL6wecJ0YVSVlVeUHiHaqqKn2c24n355s",
+                "sheetId": "OrderSheet2026",
+                "includesHeaders": true,
+                "useColumnHeaders": true,
+                "values": {
+                    "Order ID": "{{1.data[].id}}",
+                    "Product Table (JSON)": "{{1.data[].items}}",
+                    "Shipping Data (JSON)": "{{1.data[].shipping}}",
+                    "Order Nick": "{{1.data[].externalId}}"
+                }
+            },
+            "metadata": {
+                "designer": {
+                    "x": 29,
+                    "y": -42
+                },
+                "setupValidation": {
+                    "version": 1,
+                    "configuration": "3ab5a9ef27ea5a02",
+                    "result": {
+                        "valid": true,
+                        "fields": []
+                    }
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "label": "Blake's Google connection (bcoram04@gmail.com)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            }
+                        }
+                    },
+                    "expect": {
+                        "mode": {
+                            "label": "Search by path"
+                        },
+                        "insertUnformatted": {
+                            "mode": "edit"
+                        },
+                        "valueInputOption": {
+                            "mode": "edit"
+                        },
+                        "insertDataOption": {
+                            "mode": "edit"
+                        },
+                        "from": {
+                            "label": "My Drive"
+                        },
+                        "spreadsheetId": {
+                            "path": [
+                                "Sample Order Spreadsheet"
+                            ]
+                        },
+                        "sheetId": {
+                            "label": "OrderSheet2026"
+                        },
+                        "includesHeaders": {
+                            "label": "Yes"
+                        },
+                        "useColumnHeaders": {
+                            "label": "Yes"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "mode",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "select",
+                                "fromAll",
+                                "map"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "insertUnformatted",
+                        "type": "boolean",
+                        "label": "Unformatted",
+                        "required": true
+                    },
+                    {
+                        "name": "valueInputOption",
+                        "type": "select",
+                        "label": "Value input option",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "USER_ENTERED",
+                                "RAW"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "insertDataOption",
+                        "type": "select",
+                        "label": "Insert data option",
+                        "validate": {
+                            "enum": [
+                                "INSERT_ROWS",
+                                "OVERWRITE"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Drive",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "file",
+                        "label": "Spreadsheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "useColumnHeaders",
+                        "type": "select",
+                        "label": "Use column headers as IDs of the columns",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "values",
+                        "type": "collection",
+                        "label": "Values in columns",
+                        "metadata": [
+                            [
+                                [
+                                    "Order ID",
+                                    "Product Table (JSON)",
+                                    "Shipping Data (JSON)",
+                                    "Order Nick"
+                                ]
+                            ]
+                        ],
+                        "spec": [
+                            {
+                                "name": "Order ID",
+                                "type": "text",
+                                "label": "Order ID (A)"
+                            },
+                            {
+                                "name": "Product Table (JSON)",
+                                "type": "text",
+                                "label": "Product Table (JSON) (B)"
+                            },
+                            {
+                                "name": "Shipping Data (JSON)",
+                                "type": "text",
+                                "label": "Shipping Data (JSON) (C)"
+                            },
+                            {
+                                "name": "Order Nick",
+                                "type": "text",
+                                "label": "Order Nick (D)"
+                            }
+                        ]
+                    }
+                ],
+                "advanced": true
+            },
+            "onerror": [
+                {
+                    "id": 8,
+                    "module": "builtin:Break",
+                    "version": 1,
+                    "parameters": {},
+                    "mapper": {
+                        "retry": true,
+                        "count": "15",
+                        "interval": "1"
+                    },
+                    "metadata": {
+                        "designer": {
+                            "x": -136,
+                            "y": 186
+                        },
+                        "setupValidation": {
+                            "version": 1,
+                            "configuration": "bd5d447e7adb2e14",
+                            "result": {
+                                "valid": true,
+                                "fields": []
+                            }
+                        },
+                        "restore": {
+                            "expect": {
+                                "retry": {
+                                    "mode": "chose"
+                                }
+                            }
+                        },
+                        "expect": [
+                            {
+                                "name": "retry",
+                                "type": "boolean",
+                                "label": "Retry automatically",
+                                "required": true
+                            },
+                            {
+                                "name": "count",
+                                "type": "uinteger",
+                                "label": "Number of retries",
+                                "validate": {
+                                    "min": 1,
+                                    "max": 10000
+                                },
+                                "required": true
+                            },
+                            {
+                                "name": "interval",
+                                "type": "uinteger",
+                                "label": "Minutes between retries",
+                                "validate": {
+                                    "min": 1,
+                                    "max": 44640
+                                },
+                                "required": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": 46,
+            "module": "http:MakeRequest",
+            "version": 4,
+            "parameters": {
+                "authenticationType": "apiKey",
+                "tlsType": "",
+                "apiKeyKeychain": 241231
+            },
+            "mapper": {
+                "url": "https://fq6umoa793.execute-api.us-east-1.amazonaws.com/api/me",
+                "method": "get",
+                "parseResponse": "{{true}}",
+                "stopOnHttpError": true,
+                "timeout": "40",
+                "allowRedirects": true,
+                "shareCookies": false,
+                "requestCompressedContent": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 343,
+                    "y": -204,
+                    "name": "Fetch Company Information"
+                },
+                "setupValidation": {
+                    "version": 1,
+                    "configuration": "8e28dbd2da818f8a",
+                    "result": {
+                        "valid": true,
+                        "fields": []
+                    }
+                },
+                "restore": {
+                    "parameters": {
+                        "authenticationType": {
+                            "label": "API key (Legacy)Use when the service requires an API key in the header or query parameters."
+                        },
+                        "tlsType": {
+                            "label": "Empty"
+                        },
+                        "apiKeyKeychain": {
+                            "label": "Sample Backend AWS Lambda Keychain"
+                        }
+                    },
+                    "expect": {
+                        "method": {
+                            "mode": "chose",
+                            "label": "GET"
+                        },
+                        "headers": {
+                            "mode": "chose"
+                        },
+                        "queryParameters": {
+                            "mode": "chose"
+                        },
+                        "contentType": {
+                            "label": "Empty"
+                        },
+                        "parseResponse": {
+                            "mode": "edit"
+                        },
+                        "stopOnHttpError": {
+                            "mode": "chose"
+                        },
+                        "allowRedirects": {
+                            "mode": "chose"
+                        },
+                        "shareCookies": {
+                            "mode": "chose"
+                        },
+                        "requestCompressedContent": {
+                            "mode": "chose"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "authenticationType",
+                        "type": "select",
+                        "label": "Authentication type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "noAuth",
+                                "apiKeyConnection",
+                                "basicAuthConnection",
+                                "oAuth",
+                                "apiKey",
+                                "basicAuth"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tlsType",
+                        "type": "select",
+                        "label": "Transport layer security (TLS)",
+                        "validate": {
+                            "enum": [
+                                "mTls",
+                                "tls"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "proxyKeychain",
+                        "type": "keychain:proxy",
+                        "label": "Proxy"
+                    },
+                    {
+                        "name": "apiKeyKeychain",
+                        "type": "keychain:apikeyauth",
+                        "label": "Credentials",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "get",
+                                "head",
+                                "post",
+                                "put",
+                                "patch",
+                                "delete",
+                                "options"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "type": "array",
+                        "label": "Headers",
+                        "spec": {
+                            "name": "value",
+                            "label": "Header",
+                            "type": "collection",
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "label": "Name",
+                                    "type": "text",
+                                    "required": true,
+                                    "validate": {
+                                        "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                                    }
+                                },
+                                {
+                                    "name": "value",
+                                    "label": "Value",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "queryParameters",
+                        "type": "array",
+                        "label": "Query parameters",
+                        "spec": {
+                            "name": "value",
+                            "label": "Parameter",
+                            "type": "collection",
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "label": "Name",
+                                    "type": "text",
+                                    "required": true
+                                },
+                                {
+                                    "name": "value",
+                                    "label": "Value",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "contentType",
+                        "type": "select",
+                        "label": "Body content type",
+                        "validate": {
+                            "enum": [
+                                "json",
+                                "multipart",
+                                "urlEncoded",
+                                "custom"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "parseResponse",
+                        "type": "boolean",
+                        "label": "Parse response",
+                        "required": true
+                    },
+                    {
+                        "name": "stopOnHttpError",
+                        "type": "boolean",
+                        "label": "Return error if HTTP request fails",
+                        "required": true
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "uinteger",
+                        "label": "Timeout",
+                        "validate": {
+                            "min": 1,
+                            "max": 300
+                        }
+                    },
+                    {
+                        "name": "allowRedirects",
+                        "type": "boolean",
+                        "label": "Allow redirects",
+                        "required": true
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    },
+                    {
+                        "name": "requestCompressedContent",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "data",
+                        "label": "Data",
+                        "type": "any"
+                    },
+                    {
+                        "name": "statusCode",
+                        "label": "Status Code",
+                        "type": "number"
+                    },
+                    {
+                        "name": "headers",
+                        "label": "Headers",
+                        "type": "collection",
+                        "spec": [
+                            {
+                                "name": "content-length",
+                                "label": "Content-Length",
+                                "type": "text"
+                            },
+                            {
+                                "name": "content-encoding",
+                                "label": "Content-Encoding",
+                                "type": "text"
+                            },
+                            {
+                                "name": "content-type",
+                                "label": "Content-Type",
+                                "type": "text"
+                            },
+                            {
+                                "name": "server",
+                                "label": "Server",
+                                "type": "text"
+                            },
+                            {
+                                "name": "cache-control",
+                                "label": "Cache-Control",
+                                "type": "text"
+                            },
+                            {
+                                "name": "set-cookie",
+                                "label": "Set-Cookie",
+                                "type": "array",
+                                "spec": {
+                                    "type": "text"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "advanced": true
+            },
+            "onerror": [
+                {
+                    "id": 53,
+                    "module": "builtin:Break",
+                    "version": 1,
+                    "parameters": {},
+                    "mapper": {
+                        "retry": true,
+                        "count": "15",
+                        "interval": "1"
+                    },
+                    "metadata": {
+                        "designer": {
+                            "x": 230,
+                            "y": 145
+                        },
+                        "setupValidation": {
+                            "version": 1,
+                            "configuration": "bd5d447e7adb2e14",
+                            "result": {
+                                "valid": true,
+                                "fields": []
+                            }
+                        },
+                        "restore": {
+                            "expect": {
+                                "retry": {
+                                    "mode": "chose"
+                                }
+                            }
+                        },
+                        "expect": [
+                            {
+                                "name": "retry",
+                                "type": "boolean",
+                                "label": "Retry automatically",
+                                "required": true
+                            },
+                            {
+                                "name": "count",
+                                "type": "uinteger",
+                                "label": "Number of retries",
+                                "validate": {
+                                    "min": 1,
+                                    "max": 10000
+                                },
+                                "required": true
+                            },
+                            {
+                                "name": "interval",
+                                "type": "uinteger",
+                                "label": "Minutes between retries",
+                                "validate": {
+                                    "min": 1,
+                                    "max": 44640
+                                },
+                                "required": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": 42,
+            "module": "builtin:BasicIfElse",
+            "version": 1,
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 609,
+                    "y": -120
+                }
+            },
+            "branches": [
+                {
+                    "merge": false,
+                    "label": "Simulate Business Approval",
+                    "type": "condition",
+                    "flow": [
+                        {
+                            "id": 48,
+                            "module": "http:MakeRequest",
+                            "version": 4,
+                            "parameters": {
+                                "authenticationType": "apiKey",
+                                "tlsType": "",
+                                "apiKeyKeychain": 241231
+                            },
+                            "mapper": {
+                                "url": "https://fq6umoa793.execute-api.us-east-1.amazonaws.com/api/products/{{1.data[].items[].sku}}",
+                                "method": "get",
+                                "parseResponse": "{{true}}",
+                                "stopOnHttpError": true,
+                                "timeout": "40",
+                                "allowRedirects": true,
+                                "shareCookies": false,
+                                "requestCompressedContent": true
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 883,
+                                    "y": -339,
+                                    "name": "Fetch Individual Product"
+                                },
+                                "setupValidation": {
+                                    "version": 1,
+                                    "configuration": "26e11789655caa25",
+                                    "result": {
+                                        "valid": true,
+                                        "fields": []
+                                    }
+                                },
+                                "restore": {
+                                    "parameters": {
+                                        "authenticationType": {
+                                            "label": "API key (Legacy)Use when the service requires an API key in the header or query parameters."
+                                        },
+                                        "tlsType": {
+                                            "label": "Empty"
+                                        },
+                                        "apiKeyKeychain": {
+                                            "label": "Sample Backend AWS Lambda Keychain"
+                                        }
+                                    },
+                                    "expect": {
+                                        "method": {
+                                            "mode": "chose",
+                                            "label": "GET"
+                                        },
+                                        "headers": {
+                                            "mode": "chose"
+                                        },
+                                        "queryParameters": {
+                                            "mode": "chose"
+                                        },
+                                        "contentType": {
+                                            "label": "Empty"
+                                        },
+                                        "parseResponse": {
+                                            "mode": "edit"
+                                        },
+                                        "stopOnHttpError": {
+                                            "mode": "chose"
+                                        },
+                                        "allowRedirects": {
+                                            "mode": "chose"
+                                        },
+                                        "shareCookies": {
+                                            "mode": "chose"
+                                        },
+                                        "requestCompressedContent": {
+                                            "mode": "chose"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "authenticationType",
+                                        "type": "select",
+                                        "label": "Authentication type",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "noAuth",
+                                                "apiKeyConnection",
+                                                "basicAuthConnection",
+                                                "oAuth",
+                                                "apiKey",
+                                                "basicAuth"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "tlsType",
+                                        "type": "select",
+                                        "label": "Transport layer security (TLS)",
+                                        "validate": {
+                                            "enum": [
+                                                "mTls",
+                                                "tls"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "proxyKeychain",
+                                        "type": "keychain:proxy",
+                                        "label": "Proxy"
+                                    },
+                                    {
+                                        "name": "apiKeyKeychain",
+                                        "type": "keychain:apikeyauth",
+                                        "label": "Credentials",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "url",
+                                        "type": "url",
+                                        "label": "URL",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "method",
+                                        "type": "select",
+                                        "label": "Method",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "get",
+                                                "head",
+                                                "post",
+                                                "put",
+                                                "patch",
+                                                "delete",
+                                                "options"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "headers",
+                                        "type": "array",
+                                        "label": "Headers",
+                                        "spec": {
+                                            "name": "value",
+                                            "label": "Header",
+                                            "type": "collection",
+                                            "spec": [
+                                                {
+                                                    "name": "name",
+                                                    "label": "Name",
+                                                    "type": "text",
+                                                    "required": true,
+                                                    "validate": {
+                                                        "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                                                    }
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "label": "Value",
+                                                    "type": "text"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "queryParameters",
+                                        "type": "array",
+                                        "label": "Query parameters",
+                                        "spec": {
+                                            "name": "value",
+                                            "label": "Parameter",
+                                            "type": "collection",
+                                            "spec": [
+                                                {
+                                                    "name": "name",
+                                                    "label": "Name",
+                                                    "type": "text",
+                                                    "required": true
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "label": "Value",
+                                                    "type": "text"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "contentType",
+                                        "type": "select",
+                                        "label": "Body content type",
+                                        "validate": {
+                                            "enum": [
+                                                "json",
+                                                "multipart",
+                                                "urlEncoded",
+                                                "custom"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "parseResponse",
+                                        "type": "boolean",
+                                        "label": "Parse response",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "stopOnHttpError",
+                                        "type": "boolean",
+                                        "label": "Return error if HTTP request fails",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "timeout",
+                                        "type": "uinteger",
+                                        "label": "Timeout",
+                                        "validate": {
+                                            "min": 1,
+                                            "max": 300
+                                        }
+                                    },
+                                    {
+                                        "name": "allowRedirects",
+                                        "type": "boolean",
+                                        "label": "Allow redirects",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "shareCookies",
+                                        "type": "boolean",
+                                        "label": "Share cookies with other HTTP modules",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "requestCompressedContent",
+                                        "type": "boolean",
+                                        "label": "Request compressed content",
+                                        "required": true
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "data",
+                                        "label": "Data",
+                                        "type": "any"
+                                    },
+                                    {
+                                        "name": "statusCode",
+                                        "label": "Status Code",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "name": "headers",
+                                        "label": "Headers",
+                                        "type": "collection",
+                                        "spec": [
+                                            {
+                                                "name": "content-length",
+                                                "label": "Content-Length",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "name": "content-encoding",
+                                                "label": "Content-Encoding",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "name": "content-type",
+                                                "label": "Content-Type",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "name": "server",
+                                                "label": "Server",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "name": "cache-control",
+                                                "label": "Cache-Control",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "name": "set-cookie",
+                                                "label": "Set-Cookie",
+                                                "type": "array",
+                                                "spec": {
+                                                    "type": "text"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "advanced": true
+                            },
+                            "onerror": [
+                                {
+                                    "id": 54,
+                                    "module": "builtin:Break",
+                                    "version": 1,
+                                    "parameters": {},
+                                    "mapper": {
+                                        "retry": true,
+                                        "count": "15",
+                                        "interval": "1"
+                                    },
+                                    "metadata": {
+                                        "designer": {
+                                            "x": 681,
+                                            "y": -530
+                                        },
+                                        "setupValidation": {
+                                            "version": 1,
+                                            "configuration": "bd5d447e7adb2e14",
+                                            "result": {
+                                                "valid": true,
+                                                "fields": []
+                                            }
+                                        },
+                                        "restore": {
+                                            "expect": {
+                                                "retry": {
+                                                    "mode": "chose"
+                                                }
+                                            }
+                                        },
+                                        "expect": [
+                                            {
+                                                "name": "retry",
+                                                "type": "boolean",
+                                                "label": "Retry automatically",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "count",
+                                                "type": "uinteger",
+                                                "label": "Number of retries",
+                                                "validate": {
+                                                    "min": 1,
+                                                    "max": 10000
+                                                },
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "interval",
+                                                "type": "uinteger",
+                                                "label": "Minutes between retries",
+                                                "validate": {
+                                                    "min": 1,
+                                                    "max": 44640
+                                                },
+                                                "required": true
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": 50,
+                            "module": "builtin:BasicIfElse",
+                            "version": 1,
+                            "mapper": null,
+                            "metadata": {
+                                "designer": {
+                                    "x": 1238,
+                                    "y": -336
+                                }
+                            },
+                            "branches": [
+                                {
+                                    "merge": false,
+                                    "label": "Enough product on hand?",
+                                    "type": "condition",
+                                    "flow": [
+                                        {
+                                            "id": 52,
+                                            "module": "google-sheets:addRow",
+                                            "version": 2,
+                                            "parameters": {
+                                                "__IMTCONN__": 11850245
+                                            },
+                                            "mapper": {
+                                                "mode": "select",
+                                                "insertUnformatted": false,
+                                                "valueInputOption": "USER_ENTERED",
+                                                "insertDataOption": "INSERT_ROWS",
+                                                "from": "drive",
+                                                "spreadsheetId": "/1bp8KC-NxHVxe91K_vYIbAInj5qKSy9PylNLK2FzrmMg",
+                                                "sheetId": "Sheet1",
+                                                "includesHeaders": true,
+                                                "useColumnHeaders": true,
+                                                "values": {
+                                                    "order_id": "{{1.data[].id}}",
+                                                    "priority": "standard",
+                                                    "order_date": "{{1.data[].createdAt}}",
+                                                    "pick_list": "{{1.data[].items}}",
+                                                    "shipping_data": "{{1.data[].shipping}}"
+                                                }
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1637,
+                                                    "y": -611
+                                                },
+                                                "setupValidation": {
+                                                    "version": 1,
+                                                    "configuration": "4869decd39b926ef",
+                                                    "result": {
+                                                        "valid": true,
+                                                        "fields": []
+                                                    }
+                                                },
+                                                "restore": {
+                                                    "parameters": {
+                                                        "__IMTCONN__": {
+                                                            "label": "Blake's Google connection (bcoram04@gmail.com)",
+                                                            "data": {
+                                                                "scoped": "true",
+                                                                "connection": "google"
+                                                            }
+                                                        }
+                                                    },
+                                                    "expect": {
+                                                        "mode": {
+                                                            "label": "Search by path"
+                                                        },
+                                                        "insertUnformatted": {
+                                                            "mode": "chose"
+                                                        },
+                                                        "valueInputOption": {
+                                                            "mode": "chose",
+                                                            "label": "User entered"
+                                                        },
+                                                        "insertDataOption": {
+                                                            "mode": "chose",
+                                                            "label": "Insert rows"
+                                                        },
+                                                        "from": {
+                                                            "label": "My Drive"
+                                                        },
+                                                        "spreadsheetId": {
+                                                            "path": [
+                                                                "Sample Pending Orders"
+                                                            ]
+                                                        },
+                                                        "sheetId": {
+                                                            "label": "Sheet1"
+                                                        },
+                                                        "includesHeaders": {
+                                                            "label": "Yes"
+                                                        },
+                                                        "useColumnHeaders": {
+                                                            "label": "Yes"
+                                                        }
+                                                    }
+                                                },
+                                                "parameters": [
+                                                    {
+                                                        "name": "__IMTCONN__",
+                                                        "type": "account:google",
+                                                        "label": "Connection",
+                                                        "required": true
+                                                    }
+                                                ],
+                                                "expect": [
+                                                    {
+                                                        "name": "mode",
+                                                        "type": "select",
+                                                        "label": "Search Method",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                "select",
+                                                                "fromAll",
+                                                                "map"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "insertUnformatted",
+                                                        "type": "boolean",
+                                                        "label": "Unformatted",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "valueInputOption",
+                                                        "type": "select",
+                                                        "label": "Value input option",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                "USER_ENTERED",
+                                                                "RAW"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "insertDataOption",
+                                                        "type": "select",
+                                                        "label": "Insert data option",
+                                                        "validate": {
+                                                            "enum": [
+                                                                "INSERT_ROWS",
+                                                                "OVERWRITE"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "from",
+                                                        "type": "select",
+                                                        "label": "Drive",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                "drive",
+                                                                "share",
+                                                                "team"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "spreadsheetId",
+                                                        "type": "file",
+                                                        "label": "Spreadsheet Name",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "sheetId",
+                                                        "type": "select",
+                                                        "label": "Sheet Name",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "includesHeaders",
+                                                        "type": "select",
+                                                        "label": "Table contains headers",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                true,
+                                                                false
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "useColumnHeaders",
+                                                        "type": "select",
+                                                        "label": "Use column headers as IDs of the columns",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                true,
+                                                                false
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "values",
+                                                        "type": "collection",
+                                                        "label": "Values in columns",
+                                                        "metadata": [
+                                                            [
+                                                                [
+                                                                    "order_id",
+                                                                    "priority",
+                                                                    "order_date",
+                                                                    "pick_list",
+                                                                    "shipping_data"
+                                                                ]
+                                                            ]
+                                                        ],
+                                                        "spec": [
+                                                            {
+                                                                "name": "order_id",
+                                                                "type": "text",
+                                                                "label": "order_id (A)"
+                                                            },
+                                                            {
+                                                                "name": "priority",
+                                                                "type": "text",
+                                                                "label": "priority (B)"
+                                                            },
+                                                            {
+                                                                "name": "order_date",
+                                                                "type": "text",
+                                                                "label": "order_date (C)"
+                                                            },
+                                                            {
+                                                                "name": "pick_list",
+                                                                "type": "text",
+                                                                "label": "pick_list (D)"
+                                                            },
+                                                            {
+                                                                "name": "shipping_data",
+                                                                "type": "text",
+                                                                "label": "shipping_data (E)"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "conditions": [
+                                        [
+                                            {
+                                                "a": "{{48.data.onHand}}",
+                                                "o": "number:greaterorequal",
+                                                "b": "{{1.data[].items[].qty}}"
+                                            }
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "merge": false,
+                                    "disabled": false,
+                                    "label": "",
+                                    "type": "else",
+                                    "flow": [
+                                        {
+                                            "id": 51,
+                                            "module": "builtin:BasicIfElse",
+                                            "version": 1,
+                                            "mapper": null,
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1483,
+                                                    "y": -189
+                                                }
+                                            },
+                                            "branches": [
+                                                {
+                                                    "merge": false,
+                                                    "label": "",
+                                                    "type": "condition",
+                                                    "flow": [
+                                                        {
+                                                            "id": 56,
+                                                            "module": "google-sheets:addRow",
+                                                            "version": 2,
+                                                            "parameters": {
+                                                                "__IMTCONN__": 11850245
+                                                            },
+                                                            "mapper": {
+                                                                "mode": "select",
+                                                                "insertUnformatted": false,
+                                                                "valueInputOption": "USER_ENTERED",
+                                                                "insertDataOption": "INSERT_ROWS",
+                                                                "from": "drive",
+                                                                "spreadsheetId": "/1bp8KC-NxHVxe91K_vYIbAInj5qKSy9PylNLK2FzrmMg",
+                                                                "sheetId": "Sheet1",
+                                                                "includesHeaders": true,
+                                                                "useColumnHeaders": true,
+                                                                "values": {
+                                                                    "order_id": "{{1.data[].id}}",
+                                                                    "priority": "standard",
+                                                                    "order_date": "{{1.data[].createdAt}}",
+                                                                    "pick_list": "{\n\"sku\": {{48.data.sku}},\n\"name\": {{48.data.name}},\n\"qty\": {{48.data.onHand}},\n}",
+                                                                    "shipping_data": "{{1.data[].shipping}}"
+                                                                }
+                                                            },
+                                                            "metadata": {
+                                                                "designer": {
+                                                                    "x": 2083,
+                                                                    "y": -339
+                                                                },
+                                                                "setupValidation": {
+                                                                    "version": 1,
+                                                                    "configuration": "68e79652f85384e2",
+                                                                    "result": {
+                                                                        "valid": true,
+                                                                        "fields": []
+                                                                    }
+                                                                },
+                                                                "restore": {
+                                                                    "parameters": {
+                                                                        "__IMTCONN__": {
+                                                                            "label": "Blake's Google connection (bcoram04@gmail.com)",
+                                                                            "data": {
+                                                                                "scoped": "true",
+                                                                                "connection": "google"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "expect": {
+                                                                        "mode": {
+                                                                            "label": "Search by path"
+                                                                        },
+                                                                        "insertUnformatted": {
+                                                                            "mode": "chose"
+                                                                        },
+                                                                        "valueInputOption": {
+                                                                            "mode": "chose",
+                                                                            "label": "User entered"
+                                                                        },
+                                                                        "insertDataOption": {
+                                                                            "mode": "chose",
+                                                                            "label": "Insert rows"
+                                                                        },
+                                                                        "from": {
+                                                                            "label": "My Drive"
+                                                                        },
+                                                                        "spreadsheetId": {
+                                                                            "path": [
+                                                                                "Sample Pending Orders"
+                                                                            ]
+                                                                        },
+                                                                        "sheetId": {
+                                                                            "label": "Sheet1"
+                                                                        },
+                                                                        "includesHeaders": {
+                                                                            "label": "Yes"
+                                                                        },
+                                                                        "useColumnHeaders": {
+                                                                            "label": "Yes"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "parameters": [
+                                                                    {
+                                                                        "name": "__IMTCONN__",
+                                                                        "type": "account:google",
+                                                                        "label": "Connection",
+                                                                        "required": true
+                                                                    }
+                                                                ],
+                                                                "expect": [
+                                                                    {
+                                                                        "name": "mode",
+                                                                        "type": "select",
+                                                                        "label": "Search Method",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "select",
+                                                                                "fromAll",
+                                                                                "map"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "insertUnformatted",
+                                                                        "type": "boolean",
+                                                                        "label": "Unformatted",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "valueInputOption",
+                                                                        "type": "select",
+                                                                        "label": "Value input option",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "USER_ENTERED",
+                                                                                "RAW"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "insertDataOption",
+                                                                        "type": "select",
+                                                                        "label": "Insert data option",
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "INSERT_ROWS",
+                                                                                "OVERWRITE"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "from",
+                                                                        "type": "select",
+                                                                        "label": "Drive",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "drive",
+                                                                                "share",
+                                                                                "team"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "spreadsheetId",
+                                                                        "type": "file",
+                                                                        "label": "Spreadsheet Name",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "sheetId",
+                                                                        "type": "select",
+                                                                        "label": "Sheet Name",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "includesHeaders",
+                                                                        "type": "select",
+                                                                        "label": "Table contains headers",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                true,
+                                                                                false
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "useColumnHeaders",
+                                                                        "type": "select",
+                                                                        "label": "Use column headers as IDs of the columns",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                true,
+                                                                                false
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "values",
+                                                                        "type": "collection",
+                                                                        "label": "Values in columns",
+                                                                        "metadata": [
+                                                                            [
+                                                                                [
+                                                                                    "order_id",
+                                                                                    "priority",
+                                                                                    "order_date",
+                                                                                    "pick_list",
+                                                                                    "shipping_data"
+                                                                                ]
+                                                                            ]
+                                                                        ],
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "order_id",
+                                                                                "type": "text",
+                                                                                "label": "order_id (A)"
+                                                                            },
+                                                                            {
+                                                                                "name": "priority",
+                                                                                "type": "text",
+                                                                                "label": "priority (B)"
+                                                                            },
+                                                                            {
+                                                                                "name": "order_date",
+                                                                                "type": "text",
+                                                                                "label": "order_date (C)"
+                                                                            },
+                                                                            {
+                                                                                "name": "pick_list",
+                                                                                "type": "text",
+                                                                                "label": "pick_list (D)"
+                                                                            },
+                                                                            {
+                                                                                "name": "shipping_data",
+                                                                                "type": "text",
+                                                                                "label": "shipping_data (E)"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "id": 55,
+                                                            "module": "google-sheets:addRow",
+                                                            "version": 2,
+                                                            "parameters": {
+                                                                "__IMTCONN__": 11850245
+                                                            },
+                                                            "mapper": {
+                                                                "mode": "select",
+                                                                "insertUnformatted": false,
+                                                                "valueInputOption": "USER_ENTERED",
+                                                                "insertDataOption": "INSERT_ROWS",
+                                                                "from": "drive",
+                                                                "spreadsheetId": "/1Dh7WOgqyam0CAOhCilHAkb3zmlNdcQhmtD4TcsoxMCg",
+                                                                "sheetId": "Sheet1",
+                                                                "includesHeaders": true,
+                                                                "useColumnHeaders": true,
+                                                                "values": {
+                                                                    "order_id": "{{1.data[].id}}",
+                                                                    "priority": "standard",
+                                                                    "order_date": "{{1.data[].createdAt}}",
+                                                                    "backorder_list": "{\n\"sku\": {{1.data[].items[].sku}},\n\"name\":{{1.data[].items[].name}},\n\"qty\":{{1.data[].items[].qty - 48.data.onHand}},\n}",
+                                                                    "shipping_data": "{{1.data[].shipping}}"
+                                                                }
+                                                            },
+                                                            "metadata": {
+                                                                "designer": {
+                                                                    "x": 2430,
+                                                                    "y": -231
+                                                                },
+                                                                "setupValidation": {
+                                                                    "version": 1,
+                                                                    "configuration": "56774074017e294b",
+                                                                    "result": {
+                                                                        "valid": true,
+                                                                        "fields": []
+                                                                    }
+                                                                },
+                                                                "restore": {
+                                                                    "parameters": {
+                                                                        "__IMTCONN__": {
+                                                                            "label": "Blake's Google connection (bcoram04@gmail.com)",
+                                                                            "data": {
+                                                                                "scoped": "true",
+                                                                                "connection": "google"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "expect": {
+                                                                        "mode": {
+                                                                            "label": "Search by path"
+                                                                        },
+                                                                        "insertUnformatted": {
+                                                                            "mode": "chose"
+                                                                        },
+                                                                        "valueInputOption": {
+                                                                            "mode": "chose",
+                                                                            "label": "User entered"
+                                                                        },
+                                                                        "insertDataOption": {
+                                                                            "mode": "chose",
+                                                                            "label": "Insert rows"
+                                                                        },
+                                                                        "from": {
+                                                                            "label": "My Drive"
+                                                                        },
+                                                                        "spreadsheetId": {
+                                                                            "path": [
+                                                                                "Sample Back Orders"
+                                                                            ]
+                                                                        },
+                                                                        "sheetId": {
+                                                                            "label": "Sheet1"
+                                                                        },
+                                                                        "includesHeaders": {
+                                                                            "label": "Yes"
+                                                                        },
+                                                                        "useColumnHeaders": {
+                                                                            "label": "Yes"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "parameters": [
+                                                                    {
+                                                                        "name": "__IMTCONN__",
+                                                                        "type": "account:google",
+                                                                        "label": "Connection",
+                                                                        "required": true
+                                                                    }
+                                                                ],
+                                                                "expect": [
+                                                                    {
+                                                                        "name": "mode",
+                                                                        "type": "select",
+                                                                        "label": "Search Method",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "select",
+                                                                                "fromAll",
+                                                                                "map"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "insertUnformatted",
+                                                                        "type": "boolean",
+                                                                        "label": "Unformatted",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "valueInputOption",
+                                                                        "type": "select",
+                                                                        "label": "Value input option",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "USER_ENTERED",
+                                                                                "RAW"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "insertDataOption",
+                                                                        "type": "select",
+                                                                        "label": "Insert data option",
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "INSERT_ROWS",
+                                                                                "OVERWRITE"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "from",
+                                                                        "type": "select",
+                                                                        "label": "Drive",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "drive",
+                                                                                "share",
+                                                                                "team"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "spreadsheetId",
+                                                                        "type": "file",
+                                                                        "label": "Spreadsheet Name",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "sheetId",
+                                                                        "type": "select",
+                                                                        "label": "Sheet Name",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "includesHeaders",
+                                                                        "type": "select",
+                                                                        "label": "Table contains headers",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                true,
+                                                                                false
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "useColumnHeaders",
+                                                                        "type": "select",
+                                                                        "label": "Use column headers as IDs of the columns",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                true,
+                                                                                false
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "values",
+                                                                        "type": "collection",
+                                                                        "label": "Values in columns",
+                                                                        "metadata": [
+                                                                            [
+                                                                                [
+                                                                                    "order_id",
+                                                                                    "priority",
+                                                                                    "order_date",
+                                                                                    "backorder_list",
+                                                                                    "shipping_data"
+                                                                                ]
+                                                                            ]
+                                                                        ],
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "order_id",
+                                                                                "type": "text",
+                                                                                "label": "order_id (A)"
+                                                                            },
+                                                                            {
+                                                                                "name": "priority",
+                                                                                "type": "text",
+                                                                                "label": "priority (B)"
+                                                                            },
+                                                                            {
+                                                                                "name": "order_date",
+                                                                                "type": "text",
+                                                                                "label": "order_date (C)"
+                                                                            },
+                                                                            {
+                                                                                "name": "backorder_list",
+                                                                                "type": "text",
+                                                                                "label": "backorder_list (D)"
+                                                                            },
+                                                                            {
+                                                                                "name": "shipping_data",
+                                                                                "type": "text",
+                                                                                "label": "shipping_data (E)"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ],
+                                                    "conditions": [
+                                                        [
+                                                            {
+                                                                "a": "{{46.data.canSplitFullfill}}",
+                                                                "o": "boolean:istrue"
+                                                            }
+                                                        ]
+                                                    ]
+                                                },
+                                                {
+                                                    "merge": false,
+                                                    "disabled": false,
+                                                    "label": "",
+                                                    "type": "else",
+                                                    "flow": [
+                                                        {
+                                                            "id": 61,
+                                                            "module": "google-sheets:addRow",
+                                                            "version": 2,
+                                                            "parameters": {
+                                                                "__IMTCONN__": 11850245
+                                                            },
+                                                            "mapper": {
+                                                                "mode": "select",
+                                                                "insertUnformatted": false,
+                                                                "valueInputOption": "USER_ENTERED",
+                                                                "insertDataOption": "INSERT_ROWS",
+                                                                "from": "drive",
+                                                                "spreadsheetId": "/1Dh7WOgqyam0CAOhCilHAkb3zmlNdcQhmtD4TcsoxMCg",
+                                                                "sheetId": "Sheet1",
+                                                                "includesHeaders": true,
+                                                                "useColumnHeaders": true,
+                                                                "values": {
+                                                                    "order_id": "{{1.data[].id}}",
+                                                                    "priority": "standard",
+                                                                    "order_date": "{{1.data[].createdAt}}",
+                                                                    "backorder_list": "{\n\"sku\": {{1.data[].items[].sku}},\n\"name\":{{1.data[].items[].name}},\n\"qty\":{{1.data[].items[].qty}},\n}",
+                                                                    "shipping_data": "{{1.data[].shipping}}"
+                                                                }
+                                                            },
+                                                            "metadata": {
+                                                                "designer": {
+                                                                    "x": 1891,
+                                                                    "y": -5
+                                                                },
+                                                                "setupValidation": {
+                                                                    "version": 1,
+                                                                    "configuration": "50719fb8205469d2",
+                                                                    "result": {
+                                                                        "valid": true,
+                                                                        "fields": []
+                                                                    }
+                                                                },
+                                                                "restore": {
+                                                                    "parameters": {
+                                                                        "__IMTCONN__": {
+                                                                            "label": "Blake's Google connection (bcoram04@gmail.com)",
+                                                                            "data": {
+                                                                                "scoped": "true",
+                                                                                "connection": "google"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "expect": {
+                                                                        "mode": {
+                                                                            "label": "Search by path"
+                                                                        },
+                                                                        "insertUnformatted": {
+                                                                            "mode": "chose"
+                                                                        },
+                                                                        "valueInputOption": {
+                                                                            "mode": "chose",
+                                                                            "label": "User entered"
+                                                                        },
+                                                                        "insertDataOption": {
+                                                                            "mode": "chose",
+                                                                            "label": "Insert rows"
+                                                                        },
+                                                                        "from": {
+                                                                            "label": "My Drive"
+                                                                        },
+                                                                        "spreadsheetId": {
+                                                                            "path": [
+                                                                                "Sample Back Orders"
+                                                                            ]
+                                                                        },
+                                                                        "sheetId": {
+                                                                            "label": "Sheet1"
+                                                                        },
+                                                                        "includesHeaders": {
+                                                                            "label": "Yes"
+                                                                        },
+                                                                        "useColumnHeaders": {
+                                                                            "label": "Yes"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "parameters": [
+                                                                    {
+                                                                        "name": "__IMTCONN__",
+                                                                        "type": "account:google",
+                                                                        "label": "Connection",
+                                                                        "required": true
+                                                                    }
+                                                                ],
+                                                                "expect": [
+                                                                    {
+                                                                        "name": "mode",
+                                                                        "type": "select",
+                                                                        "label": "Search Method",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "select",
+                                                                                "fromAll",
+                                                                                "map"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "insertUnformatted",
+                                                                        "type": "boolean",
+                                                                        "label": "Unformatted",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "valueInputOption",
+                                                                        "type": "select",
+                                                                        "label": "Value input option",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "USER_ENTERED",
+                                                                                "RAW"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "insertDataOption",
+                                                                        "type": "select",
+                                                                        "label": "Insert data option",
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "INSERT_ROWS",
+                                                                                "OVERWRITE"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "from",
+                                                                        "type": "select",
+                                                                        "label": "Drive",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "drive",
+                                                                                "share",
+                                                                                "team"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "spreadsheetId",
+                                                                        "type": "file",
+                                                                        "label": "Spreadsheet Name",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "sheetId",
+                                                                        "type": "select",
+                                                                        "label": "Sheet Name",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "includesHeaders",
+                                                                        "type": "select",
+                                                                        "label": "Table contains headers",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                true,
+                                                                                false
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "useColumnHeaders",
+                                                                        "type": "select",
+                                                                        "label": "Use column headers as IDs of the columns",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                true,
+                                                                                false
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "values",
+                                                                        "type": "collection",
+                                                                        "label": "Values in columns",
+                                                                        "metadata": [
+                                                                            [
+                                                                                [
+                                                                                    "order_id",
+                                                                                    "priority",
+                                                                                    "order_date",
+                                                                                    "backorder_list",
+                                                                                    "shipping_data"
+                                                                                ]
+                                                                            ]
+                                                                        ],
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "order_id",
+                                                                                "type": "text",
+                                                                                "label": "order_id (A)"
+                                                                            },
+                                                                            {
+                                                                                "name": "priority",
+                                                                                "type": "text",
+                                                                                "label": "priority (B)"
+                                                                            },
+                                                                            {
+                                                                                "name": "order_date",
+                                                                                "type": "text",
+                                                                                "label": "order_date (C)"
+                                                                            },
+                                                                            {
+                                                                                "name": "backorder_list",
+                                                                                "type": "text",
+                                                                                "label": "backorder_list (D)"
+                                                                            },
+                                                                            {
+                                                                                "name": "shipping_data",
+                                                                                "type": "text",
+                                                                                "label": "shipping_data (E)"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "conditions": [
+                        [
+                            {
+                                "a": "{{46.data.approved}}",
+                                "o": "boolean:istrue"
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "merge": false,
+                    "disabled": false,
+                    "label": "",
+                    "type": "else",
+                    "flow": [
+                        {
+                            "id": 43,
+                            "module": "placeholder:Placeholder",
+                            "filter": null,
+                            "metadata": {
+                                "designer": {
+                                    "x": 878,
+                                    "y": 123
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": true,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": true,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "us2.make.com",
+        "notes": [
+            {
+                "moduleIds": [
+                    1
+                ],
+                "content": "<p>Fetches Mock Data from Development Backend Service hosted </p><p>through aws lambda</p><p></p><p>Used to replicate data that may come from fetching orders from other service.</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    5
+                ],
+                "content": "<p>If failed to fetch, automatically retry every minute for 15 consecutive minutes. This can occur when light outages or simple service interuptions</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    8
+                ],
+                "content": "<p>Retry adding order to Google Sheets</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    7
+                ],
+                "content": "<p>Add order to google sheets for 2026, include the following</p><ul><li>order_id</li><li>product_table</li><li>shipping_data</li><li>order_nick</li></ul>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    46
+                ],
+                "content": "<p>Fetch company information to check if company is approved for order</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    42
+                ],
+                "content": "<p>if business approved</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    51
+                ],
+                "content": "<p>Can split fullfill?</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    50
+                ],
+                "content": "<p>Is there enough product on hand to full fill this order?</p><p></p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    61
+                ],
+                "content": "<p>Add all quantity to backorder table</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    56
+                ],
+                "content": "<p>add to pending orders table what we have on hand in products</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            },
+            {
+                "moduleIds": [
+                    55
+                ],
+                "content": "<p>add to backorders the remaining products to full fill.</p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            }
+        ]
+    }
+}

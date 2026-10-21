@@ -1,4 +1,0 @@
-{
-  "url": "/hooks/{{webhook.externalHookId}}",
-  "method": "DELETE"
-}

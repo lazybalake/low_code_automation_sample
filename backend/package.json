@@ -1,45 +1,29 @@
 {
   "name": "inventory-api",
   "version": "1.0.0",
-  "description": "Inventory and order API as AWS Lambda functions. Make scenarios call it over HTTPS; the business rules live here.",
+  "description": "Inventory and order API as an AWS Lambda function, answering from mock data. Make scenarios call it over HTTPS.",
   "private": true,
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "db:up": "docker compose -f ../docker-compose.yml up -d dynamodb",
-    "db:down": "docker compose -f ../docker-compose.yml stop dynamodb",
-    "db:init": "node --env-file-if-exists=.env.local --import tsx scripts/local-db.ts",
-    "db:reset": "node --env-file-if-exists=.env.local --import tsx scripts/local-db.ts --reset",
-    "dev": "npm run db:init && concurrently --kill-others --names api,streams --prefix-colors blue,magenta \"npm:offline\" \"npm:streams\"",
-    "offline": "node --env-file-if-exists=.env.local node_modules/serverless/bin/serverless.js offline --stage local --useInProcess --reloadHandler",
-    "streams": "node --env-file-if-exists=.env.local --import tsx scripts/local-streams.ts",
-    "demo": "node --env-file-if-exists=.env.local scripts/demo.mjs",
+    "dev": "node --env-file-if-exists=.env node_modules/serverless/bin/serverless.js offline --stage local --useInProcess",
+    "demo": "node --env-file-if-exists=.env scripts/demo.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p .",
     "deploy": "serverless deploy --stage dev",
     "deploy:prod": "serverless deploy --stage prod",
     "info": "serverless info --stage dev",
-    "logs": "serverless logs --stage dev --tail -f"
-  },
-  "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.1147.0",
-    "@aws-sdk/client-ssm": "3.1147.0",
-    "@aws-sdk/lib-dynamodb": "3.1147.0",
-    "@aws-sdk/util-dynamodb": "^3.996.9"
+    "logs": "serverless logs --stage dev --tail -f api"
   },
   "devDependencies": {
-    "@aws-sdk/client-dynamodb-streams": "3.1147.0",
-    "@aws-sdk/client-lambda": "3.1147.0",
     "@types/aws-lambda": "^8.10.164",
     "@types/node": "^22.18.0",
-    "concurrently": "^9.2.5",
     "esbuild": "^0.27.2",
     "serverless": "^3.40.0",
     "serverless-esbuild": "^1.57.2",
     "serverless-offline": "^13.10.1",
-    "tsx": "4.23.15",
     "typescript": "^5.9.3",
     "vitest": "^4.1.8"
   }

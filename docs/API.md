@@ -1,147 +1,79 @@
 # API reference
 
-Base URL: `http://localhost:3000` locally, `http://app:3000` from inside Docker Compose, or your tunnel URL for Zapier and Make.
+Base URL:
+- `http://localhost:3000` locally (`npm run dev`)
+- The tunnel URL when Make calls your local API
+- `https://<api-id>.execute-api.<region>.amazonaws.com` once deployed (`npm run info` prints it)
+
+Responses come from mock data in memory (`backend/src/mockData.ts`). Changes last until the server (or Lambda container) restarts.
 
 ## Authentication
 
-Every `/api` route needs the API key in a header:
+Every route except `/health` needs the API key in a header:
 
 ```
 x-api-key: <API_KEY>
 ```
 
-`Authorization: Bearer <API_KEY>` also works. `/health` and `/` are public.
+`Authorization: Bearer <API_KEY>` works too. Paths start with `/api` (`https://<api-id>.execute-api.<region>.amazonaws.com/api/me`); only `/health` doesn't.
 
 ## Errors
 
 ```json
-{ "error": { "code": "conflict", "message": "Order ord_1001 cannot go from \"reserved\" to \"shipped\"", "details": { "allowed": ["paid", "cancelled"] } } }
+{ "error": { "message": "Order \"ord_9999\" not found" } }
 ```
 
-| Status | Code | Meaning |
-|---|---|---|
-| 400 | `bad_request`, `invalid_json` | Missing or invalid field |
-| 401 | `unauthorized` | Missing or wrong API key |
-| 404 | `not_found` | Unknown product, order, PO, hook or route |
-| 409 | `conflict` | Not allowed right now (bad transition, would remove reserved stock, duplicate SKU) |
-
-Numbers may be sent as strings (`"qty": "2"`), since Zapier and Make often do that.
+| Status | Meaning |
+|---|---|
+| 400 | Missing or invalid field, or a body that isn't JSON |
+| 401 | Missing or wrong API key |
+| 404 | Unknown product, order, purchase order or route |
+| 500 | A bug (see the logs) |
 
 ## Endpoints
 
-### Connection and meta
-
-| Method | Path | Returns |
-|---|---|---|
-| GET | `/health` | `{ ok, uptime }` (no key needed) |
-| GET | `/api/me` | `{ ok, storeName, currency, apiVersion }`, used as the connection test by all three tools |
-| GET | `/api/meta` | Event names, order statuses, PO statuses |
-
-### Products and stock
-
-| Method | Path | Body / query | Notes |
+| Method | Path | Body | Returns |
 |---|---|---|---|
-| GET | `/api/products` | `?sku=` `?lowStock=true` | Array |
-| POST | `/api/products` | `sku, name, price, onHand?, reorderPoint?, reorderQty?, supplier?` | 201 |
-| GET | `/api/products/:ref` | | `:ref` is the product ID or SKU (case-insensitive) |
-| PATCH | `/api/products/:ref` | `name?, price?, reorderPoint?, reorderQty?, supplier?` | Stock can't be set here |
-| POST | `/api/products/:ref/adjust` | `delta, reason?` | 409 if it would drop below reserved |
-| GET | `/api/inventory/low-stock` | | Products at or below their reorder point |
-| GET | `/api/inventory/report` | | Totals, low-stock list, pre-formatted `lowStockText` and `slackMessageJson` |
-| GET | `/api/inventory/movements` | `?sku=` `?limit=` | Stock movement history, newest first |
+| GET | `/health` | | `{ ok }`, no key needed |
+| GET | `/api/me` | | `{ ok, storeName }`, the custom app's connection test |
+| GET | `/api/products` | | All products |
+| GET | `/api/products/:sku` | | One product (SKU in any case) |
+| GET | `/api/orders` | | All orders |
+| GET | `/api/orders/:id` | | One order, by ID or `externalId` |
+| POST | `/api/orders` | `customer: { name, email }, items: [{ sku, qty }], externalId?, note?` | 201 + the order. A repeated `externalId` returns the existing order with 200 |
+| POST | `/api/orders/:id/status` | `status, carrier?, trackingNumber?` | The order. `status`: `reserved`, `paid`, `shipped`, `delivered`, `cancelled` |
+| GET | `/api/purchase-orders` | | All purchase orders |
+| POST | `/api/purchase-orders` | `sku, qty?` | 201 + the PO (`qty` defaults to the product's `reorderQty`) |
+| POST | `/api/purchase-orders/:id/status` | `status` | The PO. `status`: `requested`, `ordered`, `received` (adds the quantity to stock), `cancelled` |
+| GET | `/api/inventory/report` | | `{ storeName, lowStockCount, lowStock, lowStockText, slackMessageJson }` |
+| POST | `/api/hooks` | `targetUrl, events` (array or comma string, `*` for all) | 201 + `{ id, targetUrl, events }`. Used by the custom app's "Watch events" |
+| DELETE | `/api/hooks/:id` | | `{ id, deleted: true }` |
 
-Product shape:
-
-```json
-{
-  "id": "prd_1005", "sku": "TM-12", "name": "Trail Mix 12-Pack", "price": 21,
-  "onHand": 8, "reserved": 1, "available": 7, "lowStock": true,
-  "reorderPoint": 10, "reorderQty": 40, "supplier": "Basecamp Foods",
-  "createdAt": "…", "updatedAt": "…"
-}
-```
-
-### Orders
-
-| Method | Path | Body / query | Notes |
-|---|---|---|---|
-| GET | `/api/orders` | `?status=` `?since=<ISO date>` `?limit=` (max 200) | Newest first |
-| POST | `/api/orders` | see below | 201 new, 200 if `externalId` already exists |
-| GET | `/api/orders/:id` | | `:id` is the order ID or `externalId` |
-| POST | `/api/orders/:id/status` | `status, note?, carrier?, trackingNumber?` | `carrier` and `trackingNumber` apply when shipping |
+Example:
 
 ```bash
 curl -X POST http://localhost:3000/api/orders \
   -H "x-api-key: $API_KEY" -H "content-type: application/json" \
-  -d '{
-    "customer": { "name": "Jordan Rivers", "email": "jordan@example.com" },
-    "items": [ { "sku": "WB-750", "qty": 2 }, { "sku": "HL-300", "qty": 1 } ],
-    "externalId": "shopify-1042",
-    "note": "Gift wrap"
-  }'
+  -d '{ "customer": { "name": "Jordan Rivers", "email": "jordan@example.com" }, "items": [ { "sku": "WB-750", "qty": 2 } ], "externalId": "shop-1042" }'
 ```
 
-Duplicate SKUs in one order are merged. Response:
+## Webhook events
 
-```json
-{
-  "id": "ord_1001", "externalId": "shopify-1042", "status": "reserved",
-  "customer": { "name": "Jordan Rivers", "email": "jordan@example.com" },
-  "items": [ { "productId": "prd_1001", "sku": "WB-750", "name": "Insulated Water Bottle 750 ml", "qty": 2, "unitPrice": 24.99, "lineTotal": 49.98 } ],
-  "total": 88.98, "currency": "USD",
-  "shortages": [],
-  "shipping": { "carrier": null, "trackingNumber": null },
-  "history": [ { "status": "reserved", "at": "…", "note": "Order created" } ],
-  "duplicate": false
-}
-```
+When something changes, the API POSTs `{ id, type, createdAt, data }` to `WEBHOOK_URL` (if set) and to every registered hook that wants that type:
 
-A backordered order has `"status": "backordered"` and `"shortages": [{ "sku": "MUG-ENM", "requested": 3, "available": 0, "short": 3 }]`.
-
-Statuses: `backordered`, `reserved`, `paid`, `shipped`, `delivered`, `cancelled`. See [ARCHITECTURE.md](ARCHITECTURE.md#order-lifecycle) for allowed moves.
-
-### Purchase orders
-
-| Method | Path | Body / query | Notes |
-|---|---|---|---|
-| GET | `/api/purchase-orders` | `?status=open` or a status, `?sku=` | Newest first |
-| POST | `/api/purchase-orders` | `sku, qty? \| atLeast?, reason?, supplier?, dedupe?` | 201 new, 200 + `duplicate: true` if one is already open |
-| GET | `/api/purchase-orders/:id` | | |
-| POST | `/api/purchase-orders/:id/status` | `status, note?` | `ordered`, `received`, `cancelled` |
-
-### Webhook subscriptions (REST hooks)
-
-| Method | Path | Body | Notes |
-|---|---|---|---|
-| GET | `/api/hooks` | | Static routes plus dynamic hooks (secrets masked) |
-| POST | `/api/hooks` | `targetUrl, events` (array, comma string or `"*"`) | 201; the response includes the hook's `secret`, shown only once |
-| GET | `/api/hooks/:id` | | |
-| DELETE | `/api/hooks/:id` | | `{ id, deleted: true }` |
-
-`event` (singular) and `url` / `target_url` are accepted as aliases.
-
-### Event log
-
-| Method | Path | Query |
-|---|---|---|
-| GET | `/api/events` | `?type=order.created,inventory.low_stock` `?after=<ISO date>` `?limit=` (max 500) |
-
-Newest first. Useful for polling tools, debugging, and the Zapier triggers' sample data.
+| Event | `data` |
+|---|---|
+| `order.created` | The order |
+| `order.status_changed` | `{ from, to, order }` |
+| `purchase_order.created` | The purchase order |
+| `purchase_order.status_changed` | `{ from, to, purchaseOrder }` |
 
 ## Environment variables
 
+Set in `serverless.yml`; values come from `backend/.env` for every command (`dev`, `deploy`), and a value already set in your shell wins.
+
 | Variable | Default | Purpose |
 |---|---|---|
-| `API_KEY` | (required) | Key for every `/api` call |
-| `PORT` | `3000` | |
-| `STORE_NAME` | `Trailhead Supply Co.` | Shown in `/api/me` and reports |
-| `CURRENCY` | `USD` | |
-| `DATA_FILE` | `./data/db.json` | `:memory:` for throwaway runs |
-| `SEED_FILE` | `./data/seed.json` | Loaded once, when the store is empty |
-| `WEBHOOK_SECRET` | (empty) | Signs static-route deliveries |
-| `WEBHOOK_SUBSCRIPTIONS` | (empty) | Static event routes, see ARCHITECTURE.md |
-| `WEBHOOK_RETRIES` | `3` | Retries after the first attempt |
-| `WEBHOOK_BACKOFF_MS` | `500` | First retry delay, doubled each time |
-| `WEBHOOK_TIMEOUT_MS` | `5000` | Per-attempt timeout |
-| `EVENT_LOG_LIMIT` | `500` | Events kept for `/api/events` |
-| `LOG_LEVEL` | `info` | `debug`, `info`, `warn`, `error`, `silent` |
+| `API_KEY` | (required) | Key for every route except `/health` |
+| `STORE_NAME` | `Trailhead Supply Co.` | Shown in `/api/me` and the report |
+| `WEBHOOK_URL` | (empty) | A Make custom webhook that receives every event |
