@@ -21,7 +21,7 @@ services:
       WEBHOOK_SUBSCRIPTIONS: ${WEBHOOK_SUBSCRIPTIONS:-order.created=http://n8n:5678/webhook/inv-order-created,inventory.low_stock=http://n8n:5678/webhook/inv-low-stock}
     volumes:
       - app_data:/data
-
+  
   n8n:
     image: docker.n8n.io/n8nio/n8n:${N8N_VERSION:-2.44.5}
     restart: unless-stopped
