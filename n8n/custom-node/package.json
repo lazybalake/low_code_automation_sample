@@ -1,0 +1,47 @@
+{
+  "name": "n8n-nodes-inventory",
+  "version": "0.1.0",
+  "description": "n8n nodes for the inventory and order flow API: an action node and a webhook trigger that subscribes itself.",
+  "keywords": [
+    "n8n-community-node-package",
+    "inventory",
+    "orders"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/your-username/n8n-nodes-inventory",
+  "author": {
+    "name": "Your Name",
+    "email": "you@example.com"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "n8n-node build",
+    "build:tsc": "tsc && node scripts/copy-assets.mjs",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/InventoryApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Inventory/Inventory.node.js",
+      "dist/nodes/InventoryTrigger/InventoryTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "^0.53.3",
+    "@types/node": "^22.0.0",
+    "n8n-workflow": "2.44.2",
+    "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "name": "Inventory · Daily low-stock digest",
+  "flow": [
+    {
+      "id": 1,
+      "module": "http:MakeRequest",
+      "version": 4,
+      "parameters": {
+        "authenticationType": "noAuth",
+        "tlsType": ""
+      },
+      "mapper": {
+        "url": "https://REPLACE-WITH-YOUR-TUNNEL.trycloudflare.com/api/inventory/report",
+        "method": "get",
+        "headers": [
+          { "name": "x-api-key", "value": "REPLACE-WITH-YOUR-API-KEY" }
+        ],
+        "queryParameters": [],
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "allowRedirects": true,
+        "shareCookies": false,
+        "requestCompressedContent": true
+      },
+      "metadata": {
+        "designer": { "x": 0, "y": 0 }
+      }
+    },
+    {
+      "id": 2,
+      "module": "http:MakeRequest",
+      "version": 4,
+      "filter": {
+        "name": "Something needs restocking",
+        "conditions": [
+          [
+            { "a": "{{1.data.lowStockCount}}", "o": "number:greater", "b": "0" }
+          ]
+        ]
+      },
+      "parameters": {
+        "authenticationType": "noAuth",
+        "tlsType": ""
+      },
+      "mapper": {
+        "url": "https://hooks.slack.com/services/REPLACE/WITH/YOUR-INCOMING-WEBHOOK",
+        "method": "post",
+        "headers": [],
+        "queryParameters": [],
+        "contentType": "json",
+        "inputMethod": "jsonString",
+        "jsonStringBodyContent": "{{1.data.slackMessageJson}}",
+        "parseResponse": false,
+        "stopOnHttpError": true,
+        "allowRedirects": true,
+        "shareCookies": false,
+        "requestCompressedContent": true
+      },
+      "metadata": {
+        "designer": { "x": 300, "y": 0 }
+      }
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "slots": null,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": { "orphans": [] },
+    "notes": []
+  }
+}

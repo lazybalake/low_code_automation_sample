@@ -1,0 +1,20 @@
+{
+  "name": "inventory-order-flow-zapier",
+  "version": "1.0.0",
+  "description": "Private Zapier integration for the inventory and order flow API.",
+  "main": "index.js",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "jest --testTimeout 20000 --runInBand",
+    "validate": "zapier-platform validate"
+  },
+  "dependencies": {
+    "zapier-platform-core": "19.2.1"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0"
+  }
+}

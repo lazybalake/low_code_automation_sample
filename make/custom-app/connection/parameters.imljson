@@ -1,0 +1,16 @@
+[
+  {
+    "name": "baseUrl",
+    "type": "url",
+    "label": "API Base URL",
+    "help": "Public URL of the inventory API (your tunnel), without a trailing slash.",
+    "required": true
+  },
+  {
+    "name": "apiKey",
+    "type": "password",
+    "label": "API Key",
+    "help": "The API_KEY from your .env file.",
+    "required": true
+  }
+]

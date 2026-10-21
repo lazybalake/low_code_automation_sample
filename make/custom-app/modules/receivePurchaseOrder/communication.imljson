@@ -1,0 +1,11 @@
+{
+  "url": "/purchase-orders/{{parameters.purchaseOrderId}}/status",
+  "method": "POST",
+  "body": {
+    "status": "{{parameters.status}}",
+    "note": "{{parameters.note}}"
+  },
+  "response": {
+    "output": "{{body}}"
+  }
+}

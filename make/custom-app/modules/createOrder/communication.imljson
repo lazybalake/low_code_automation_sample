@@ -1,0 +1,16 @@
+{
+  "url": "/orders",
+  "method": "POST",
+  "body": {
+    "customer": {
+      "name": "{{parameters.customerName}}",
+      "email": "{{parameters.customerEmail}}"
+    },
+    "items": "{{parameters.items}}",
+    "externalId": "{{parameters.externalId}}",
+    "note": "{{parameters.note}}"
+  },
+  "response": {
+    "output": "{{body}}"
+  }
+}

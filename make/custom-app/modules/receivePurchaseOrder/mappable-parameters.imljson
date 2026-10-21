@@ -1,0 +1,16 @@
+[
+  { "name": "purchaseOrderId", "type": "text", "label": "Purchase order ID", "required": true },
+  {
+    "name": "status",
+    "type": "select",
+    "label": "New status",
+    "required": true,
+    "default": "received",
+    "options": [
+      { "label": "Ordered", "value": "ordered" },
+      { "label": "Received (adds stock, fills backorders)", "value": "received" },
+      { "label": "Cancelled", "value": "cancelled" }
+    ]
+  },
+  { "name": "note", "type": "text", "label": "Note" }
+]

@@ -1,0 +1,4 @@
+{
+  // Each delivery is { id, type, createdAt, data }. One bundle per delivery.
+  "output": "{{body}}"
+}

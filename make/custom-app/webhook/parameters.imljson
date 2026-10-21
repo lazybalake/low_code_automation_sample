@@ -1,0 +1,16 @@
+[
+  {
+    "name": "events",
+    "type": "select",
+    "label": "Events",
+    "multiple": true,
+    "required": true,
+    "options": [
+      { "label": "Order created", "value": "order.created" },
+      { "label": "Order status changed", "value": "order.status_changed" },
+      { "label": "Low stock", "value": "inventory.low_stock" },
+      { "label": "Purchase order created", "value": "purchase_order.created" },
+      { "label": "Purchase order status changed", "value": "purchase_order.status_changed" }
+    ]
+  }
+]

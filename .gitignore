@@ -1,0 +1,9 @@
+node_modules/
+.env
+app/data/db.json
+app/data/db.json.tmp
+n8n/custom-node/dist/
+*.tsbuildinfo
+zapier/.zapierapprc
+zapier/build/
+.DS_Store

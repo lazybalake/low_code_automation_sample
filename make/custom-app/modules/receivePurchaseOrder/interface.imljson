@@ -1,0 +1,7 @@
+[
+  { "name": "id", "type": "text", "label": "Purchase order ID" },
+  { "name": "sku", "type": "text", "label": "SKU" },
+  { "name": "qty", "type": "number", "label": "Quantity" },
+  { "name": "status", "type": "text", "label": "Status" },
+  { "name": "supplier", "type": "text", "label": "Supplier" }
+]

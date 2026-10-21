@@ -1,0 +1,41 @@
+{
+  "id": "evt_1001",
+  "type": "order.created",
+  "createdAt": "2026-10-21T12:32:51.487Z",
+  "data": {
+    "id": "ord_1001",
+    "externalId": null,
+    "status": "reserved",
+    "customer": {
+      "name": "Jordan Rivers",
+      "email": "jordan@example.com"
+    },
+    "items": [
+      {
+        "productId": "prd_1001",
+        "sku": "WB-750",
+        "name": "Insulated Water Bottle 750 ml",
+        "qty": 2,
+        "unitPrice": 24.99,
+        "lineTotal": 49.98
+      }
+    ],
+    "total": 49.98,
+    "currency": "USD",
+    "shortages": [],
+    "shipping": {
+      "carrier": null,
+      "trackingNumber": null
+    },
+    "note": null,
+    "history": [
+      {
+        "status": "reserved",
+        "at": "2026-10-21T12:32:51.487Z",
+        "note": "Order created"
+      }
+    ],
+    "createdAt": "2026-10-21T12:32:51.487Z",
+    "updatedAt": "2026-10-21T12:32:51.487Z"
+  }
+}

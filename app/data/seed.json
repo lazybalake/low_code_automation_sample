@@ -1,0 +1,10 @@
+{
+  "products": [
+    { "sku": "WB-750", "name": "Insulated Water Bottle 750 ml", "price": 24.99, "onHand": 40, "reorderPoint": 10, "reorderQty": 50, "supplier": "Summit Drinkware" },
+    { "sku": "HL-300", "name": "Rechargeable Headlamp 300 lm", "price": 39.0, "onHand": 15, "reorderPoint": 5, "reorderQty": 20, "supplier": "Lumen Outdoor" },
+    { "sku": "SK-MER-M", "name": "Merino Hiking Socks (M)", "price": 18.5, "onHand": 60, "reorderPoint": 20, "reorderQty": 80, "supplier": "Ridge Textiles" },
+    { "sku": "RJ-M", "name": "Packable Rain Shell (M)", "price": 129.0, "onHand": 4, "reorderPoint": 3, "reorderQty": 10, "supplier": "Ridge Textiles" },
+    { "sku": "TM-12", "name": "Trail Mix 12-Pack", "price": 21.0, "onHand": 8, "reorderPoint": 10, "reorderQty": 40, "supplier": "Basecamp Foods" },
+    { "sku": "MUG-ENM", "name": "Enamel Camp Mug", "price": 14.0, "onHand": 0, "reorderPoint": 5, "reorderQty": 30, "supplier": "Summit Drinkware" }
+  ]
+}

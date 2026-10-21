@@ -1,0 +1,15 @@
+{
+  // Shared by every module. {{connection.*}} comes from the connection parameters.
+  "baseUrl": "{{connection.baseUrl}}/api",
+  "headers": {
+    "x-api-key": "{{connection.apiKey}}"
+  },
+  "response": {
+    "error": {
+      "message": "[{{statusCode}}] {{body.error.message}}"
+    }
+  },
+  "log": {
+    "sanitize": ["request.headers.x-api-key"]
+  }
+}

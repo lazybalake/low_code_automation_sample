@@ -1,0 +1,98 @@
+{
+  "name": "Inventory · Send purchase orders to supplier",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": null,
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": { "x": 0, "y": 0 }
+      }
+    },
+    {
+      "id": 2,
+      "module": "http:MakeRequest",
+      "version": 4,
+      "filter": {
+        "name": "Only new purchase orders",
+        "conditions": [
+          [
+            { "a": "{{1.type}}", "o": "text:equal", "b": "purchase_order.created" }
+          ]
+        ]
+      },
+      "parameters": {
+        "authenticationType": "noAuth",
+        "tlsType": ""
+      },
+      "mapper": {
+        "url": "https://webhook.site/REPLACE-WITH-YOUR-SUPPLIER-ENDPOINT",
+        "method": "post",
+        "headers": [],
+        "queryParameters": [],
+        "contentType": "json",
+        "inputMethod": "jsonString",
+        "jsonStringBodyContent": "{\n  \"poNumber\": \"{{1.data.id}}\",\n  \"sku\": \"{{1.data.sku}}\",\n  \"product\": \"{{1.data.productName}}\",\n  \"quantity\": {{1.data.qty}},\n  \"supplier\": \"{{1.data.supplier}}\",\n  \"reason\": \"{{1.data.reason}}\",\n  \"requestedAt\": \"{{1.data.createdAt}}\"\n}",
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "allowRedirects": true,
+        "shareCookies": false,
+        "requestCompressedContent": true
+      },
+      "metadata": {
+        "designer": { "x": 300, "y": 0 }
+      }
+    },
+    {
+      "id": 3,
+      "module": "http:MakeRequest",
+      "version": 4,
+      "parameters": {
+        "authenticationType": "noAuth",
+        "tlsType": ""
+      },
+      "mapper": {
+        "url": "https://REPLACE-WITH-YOUR-TUNNEL.trycloudflare.com/api/purchase-orders/{{1.data.id}}/status",
+        "method": "post",
+        "headers": [
+          { "name": "x-api-key", "value": "REPLACE-WITH-YOUR-API-KEY" }
+        ],
+        "queryParameters": [],
+        "contentType": "json",
+        "inputMethod": "jsonString",
+        "jsonStringBodyContent": "{\n  \"status\": \"ordered\",\n  \"note\": \"Sent to supplier by Make\"\n}",
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "allowRedirects": true,
+        "shareCookies": false,
+        "requestCompressedContent": true
+      },
+      "metadata": {
+        "designer": { "x": 600, "y": 0 }
+      }
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "slots": null,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": { "orphans": [] },
+    "notes": []
+  }
+}
