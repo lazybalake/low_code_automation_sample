@@ -52,14 +52,27 @@ const initial = () => ({
     { sku: 'SK-MER-M', name: 'Merino Hiking Socks (M)', price: 18.5, onHand: 60, reorderPoint: 20, reorderQty: 80, supplier: 'Ridge Textiles' },
     { sku: 'RJ-M', name: 'Packable Rain Shell (M)', price: 129.0, onHand: 4, reorderPoint: 3, reorderQty: 10, supplier: 'Ridge Textiles' },
     { sku: 'TM-12', name: 'Trail Mix 12-Pack', price: 21.0, onHand: 8, reorderPoint: 10, reorderQty: 40, supplier: 'Basecamp Foods' },
-    { sku: 'MUG-ENM', name: 'Enamel Camp Mug', price: 14.0, onHand: 0, reorderPoint: 5, reorderQty: 30, supplier: 'Summit Drinkware' },
+    { sku: 'MUG-ENM', name: 'Enamel Camp Mug', price: 14.0, onHand: 4, reorderPoint: 5, reorderQty: 30, supplier: 'Summit Drinkware' },
   ] as Product[],
 
   orders: [
     {
       id: 'ord_1001', externalId: 'shop-1001', status: 'paid',
       customer: { name: 'Jordan Rivers', email: 'jordan@example.com' },
-      items: [{ sku: 'WB-750', name: 'Insulated Water Bottle 750 ml', qty: 41, unitPrice: 24.99 }],
+      items: [
+        { 
+          sku: 'WB-750', 
+          name: 'Insulated Water Bottle 750 ml', 
+          qty: 41, 
+          unitPrice: 24.99 
+        }, 
+        { 
+          sku: 'MUG-ENM', 
+          name: 'Enamel Camp Mug', 
+          qty: 3, 
+          unitPrice: 14.99 
+        }
+      ],
       total: 49.98, shipping: { carrier: null, trackingNumber: null }, note: null, createdAt: at, updatedAt: at,
     },
     {
