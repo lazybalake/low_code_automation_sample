@@ -76,7 +76,13 @@ const initial = () => ({
       total: 49.98, shipping: { carrier: null, trackingNumber: null }, note: null, createdAt: at, updatedAt: at,
     },
     {
-      id: 'ord_1002', externalId: null, status: 'shipped',
+      id: 'ord_1002', externalId: null, status: 'paid',
+      customer: { name: 'Lee Park', email: 'lee@example.com' },
+      items: [{ sku: 'HL-300', name: 'Rechargeable Headlamp 300 lm', qty: 1, unitPrice: 39.0 }],
+      total: 39.0, shipping: { carrier: 'UPS', trackingNumber: '1Z999AA10123456784' }, note: 'Gift wrap', createdAt: at, updatedAt: at,
+    },
+    {
+      id: 'ord_1003', externalId: null, status: 'shipped',
       customer: { name: 'Lee Park', email: 'lee@example.com' },
       items: [{ sku: 'HL-300', name: 'Rechargeable Headlamp 300 lm', qty: 1, unitPrice: 39.0 }],
       total: 39.0, shipping: { carrier: 'UPS', trackingNumber: '1Z999AA10123456784' }, note: 'Gift wrap', createdAt: at, updatedAt: at,
